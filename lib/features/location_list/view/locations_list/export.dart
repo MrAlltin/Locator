@@ -1,0 +1,1 @@
+export 'locations_list.dart';
