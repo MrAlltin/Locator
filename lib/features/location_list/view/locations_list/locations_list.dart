@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../widgets/export.dart';
+import '../../widgets/widgets.dart';
 import 'package:locator/repositories/locations.dart';
 
 class LocationsList extends StatefulWidget {
@@ -17,42 +17,55 @@ class _LocationsListState extends State<LocationsList> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-            appBar: AppBar(
-              title: Text(widget.name),
+      // appBar: AppBar(
+      //   title: Text(widget.name),
+      // ),
+      // bottomNavigationBar: BottomAppBar(),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedItemColor: Colors.black,
+        selectedIconTheme: theme.iconTheme,
+        unselectedItemColor: theme.primaryColor,
+        onTap: (int i) {
+          debugPrint('Нажат элемент $i');
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Главная',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Поиск'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite), label: 'Избранное'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль')
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        debugPrint(locations[0]['name'].toString());
+      }),
+      body: CustomScrollView(slivers: [
+        SliverAppBar(
+          backgroundColor: Color.fromARGB(255, 77, 180, 80),
+          title: Text(widget.name),
+          centerTitle: true,
+        ),
+        SliverList.separated(itemBuilder: (context, index) => LocationCard(
+            name: locations[index]['name'],
+            coordinates: locations[index]['coordinates'],
+            image: locations[index]['image']),
+            separatorBuilder: (context, index) => const SizedBox(
+              width: 1,
             ),
-            // bottomNavigationBar: BottomAppBar(),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: 0,
-              showSelectedLabels: true,
-              showUnselectedLabels: true,
-              selectedItemColor: Colors.black,
-              selectedIconTheme: theme.iconTheme,
-              unselectedItemColor: theme.primaryColor,
-              onTap: (int i){debugPrint('Нажат элемент $i');},
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Главная',
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.search), label: 'Поиск'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.favorite), label: 'Избранное'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Профиль')
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {debugPrint(locations[0]['name'].toString());}),
-            body: ListView.separated(
-                itemBuilder: (context, index) =>
-                    LocationCard(name: locations[index]['name'], coordinates: locations[index]['coordinates'], image: locations[index]['image']),
-                separatorBuilder: (context, index) => const SizedBox(
-                      width: 1,
-                    ),
-                itemCount: locations.length)
-            // body: MainCards(),
-            ) // This trailing comma makes auto-formatting nicer for build methods.
-        ;
+        itemCount: locations.length)]
+      ),
+    );
+    // body: ListView.separated(
+        
+        
+    // // body: MainCards(),
+    // ) // This trailing comma makes auto-formatting nicer for build methods.
+    // ;
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './features/location_list/view/export.dart';
+import 'features/location_list/view/view.dart';
 import 'themes/main_theme/export.dart';
 
 class LocationApp extends StatelessWidget {
