@@ -1,17 +1,32 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class OpenYandexMaps {
-  createRoute(String coordinates, String name) async {
-    if (Platform.isAndroid) {
-      List<String> splitted = coordinates.split(',');
-      String first = splitted[0];
-      String second = splitted[1];
-      String url = 'yandexmaps://maps.yandex.ru/?rtext=~$first,$second';
-      await launchUrl(Uri.parse(url));
+  createRoute(Uri uri) async {
+    if (kIsWeb || Platform.isIOS) {
+      await launchUrl(uri);
+    } else if (Platform.isAndroid) {
+      await launchUrl(uri);
+    } else if (Platform.isWindows) {
+      await launchUrl(uri);
     }
-    debugPrint('Pressed: "Маршрут" in ${name}');
   }
 }
+
+CupertinoAlertDialog CupertinoAlert(BuildContext context) {
+    return CupertinoAlertDialog(
+                            title: Text('Ошибка'),
+                            content: Text(
+                                'Кажется, у вас не установлены Яндекс.Карты\n Они необходимы для построения маршрута'),
+                            actions: [
+                              CupertinoDialogAction(
+                                  child: Text('Я понял'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  })
+                            ]);
+  }
+

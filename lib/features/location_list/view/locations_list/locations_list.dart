@@ -52,9 +52,7 @@ class _LocationsListState extends State<LocationsList> {
           centerTitle: true,
         ),
         SliverList.separated(itemBuilder: (context, index) => LocationCard(
-            name: locations[index]['name'],
-            coordinates: locations[index]['coordinates'],
-            image: locations[index]['image']),
+            location: locations[index],),
             separatorBuilder: (context, index) => const SizedBox(
               width: 1,
             ),
