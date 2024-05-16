@@ -17,10 +17,6 @@ class _LocationsListState extends State<LocationsList> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.name),
-      // ),
-      // bottomNavigationBar: BottomAppBar(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         showSelectedLabels: false,
@@ -47,12 +43,11 @@ class _LocationsListState extends State<LocationsList> {
       }),
       body: CustomScrollView(slivers: [
         SliverAppBar(
-          backgroundColor: Color.fromARGB(255, 77, 180, 80),
+          backgroundColor: const Color.fromARGB(255, 77, 180, 80),
           title: Text(widget.name),
           centerTitle: true,
         ),
-        SliverList.separated(itemBuilder: (context, index) => LocationCard(
-            location: locations[index],),
+        SliverList.separated(itemBuilder: newMethod,
             separatorBuilder: (context, index) => const SizedBox(
               width: 1,
             ),
@@ -66,4 +61,8 @@ class _LocationsListState extends State<LocationsList> {
     // ) // This trailing comma makes auto-formatting nicer for build methods.
     // ;
   }
-}
+
+  Widget? newMethod(context, index) {
+    return LocationCard(
+          location: locations[index],);
+}}

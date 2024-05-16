@@ -1,8 +1,7 @@
 import 'dart:io';
 
-import 'package:device_apps/device_apps.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:locator/models/models.dart';
 import 'package:locator/repositories/yandex_maps.dart';
 
 import 'package:flutter/material.dart';
@@ -19,12 +18,37 @@ class LocationCard extends StatefulWidget {
 }
 
 class _LocationCardState extends State<LocationCard> {
-  bool fav = false;
-  Icon favorite_icon = Icon(Icons.favorite_border);
+  bool isFavorite = false;
+  List<FavoriteItem>? favorites;
+  final String key = 'favorites';
+  
+
+  @override
+  void initState() {
+    super.initState();
+    loadFavoritesStatus();
+  }
+
+  void loadFavoritesStatus() async {
+    // favorites = await loadFavorites(key);
+    debugPrint(favorites.toString());
+    favorites?.forEach((element) {
+      if (element.title == widget.location['name']) {
+        setState(() {
+          isFavorite = true;
+        });
+      }
+    });
+  }
+
+  Icon favoriteIcon = const Icon(Icons.favorite_border);
+
+
+
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(bottom: 15, left: 15, right: 15),
       color: mainCard,
       child: Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
         ListTile(
@@ -33,16 +57,19 @@ class _LocationCardState extends State<LocationCard> {
           title: Text(widget.location['name']),
           subtitle: Text(widget.location['coordinates']),
           trailing: IconButton(
-            icon: favorite_icon,
+            icon: isFavorite
+                ? Icon(Icons.favorite, color: cupertinoTheme.primaryColor)
+                : const Icon(Icons.favorite_border),
             onPressed: () {
-              if (fav) {
-                fav = false;
-                favorite_icon = Icon(Icons.favorite_border);
+              if (isFavorite) {
+                // removeFromFavorites(widget.location['name']);
+                isFavorite = false;
               } else {
-                fav = true;
-                favorite_icon = favorite_icon = Icon(Icons.favorite);
+                setState(() {
+                  // addToFavorites(widget.location['name']);
+                  isFavorite = true;
+                });
               }
-              setState(() {});
             },
           ),
           contentPadding: const EdgeInsets.only(left: 15, right: 0),
@@ -52,17 +79,12 @@ class _LocationCardState extends State<LocationCard> {
           fit: BoxFit.fill,
           // height: 210,
         ),
-        const SizedBox(
-          height: 8,
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: Text(widget.location['desc'],
+              // style: mainTheme.textTheme.bodySmall,
+              textAlign: TextAlign.justify),
         ),
-        Card(
-            color: childrenCard,
-            child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(widget.location['desc'],
-                  // style: mainTheme.textTheme.bodySmall,
-                  textAlign: TextAlign.justify),
-            )),
         Container(
           margin: const EdgeInsets.only(right: 10, top: 5),
           child: Row(

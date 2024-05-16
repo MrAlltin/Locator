@@ -18,12 +18,12 @@ class OpenYandexMaps {
 
 CupertinoAlertDialog CupertinoAlert(BuildContext context) {
     return CupertinoAlertDialog(
-                            title: Text('Ошибка'),
-                            content: Text(
+                            title: const Text('Ошибка'),
+                            content: const Text(
                                 'Кажется, у вас не установлены Яндекс.Карты\n Они необходимы для построения маршрута'),
                             actions: [
                               CupertinoDialogAction(
-                                  child: Text('Я понял'),
+                                  child: const Text('Я понял'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   })

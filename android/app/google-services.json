@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "240822367064",
+    "firebase_url": "https://locator-spb-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "locator-spb",
+    "storage_bucket": "locator-spb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:240822367064:android:da0da4d14c677796cfab2d",
+        "android_client_info": {
+          "package_name": "ru.baitimirov.locator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGZxiX3CAANwUCJnOZNN2a6T8J2HaITbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

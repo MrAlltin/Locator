@@ -8,17 +8,33 @@ final mainTheme = ThemeData(
     useMaterial3: true,
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        side: BorderSide(color: const Color.fromARGB(255, 77, 180, 80)),
-          foregroundColor:const Color.fromARGB(255, 77, 180, 80),
+          side: const BorderSide(color: Color.fromARGB(255, 77, 180, 80)),
+          foregroundColor: const Color.fromARGB(255, 77, 180, 80),
           textStyle: const TextStyle(color: Color.fromARGB(255, 77, 180, 80))),
-          
     ),
+    textButtonTheme: TextButtonThemeData(style: ButtonStyle(
+      foregroundColor:
+          MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.grey; // Цвет текста для неактивной кнопки
+        }
+        return Color.fromARGB(255, 77, 180, 80); // Цвет текста для активной кнопки
+      }),
+    )),
     textTheme: const TextTheme(
+      titleMedium: TextStyle(
+        color: Color.fromARGB(255, 77, 180, 80)
+      ),
       bodyMedium: TextStyle(
-        fontFamily: 'San Francisco',
-          color: Colors.black, fontWeight: FontWeight.w500, fontSize: 20),
-      bodySmall: TextStyle(fontFamily: 'San Francisco',
-          color: Colors.black, fontWeight: FontWeight.w400, fontSize: 18),
+          fontFamily: 'San Francisco',
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
+          fontSize: 20),
+      bodySmall: TextStyle(
+          fontFamily: 'San Francisco',
+          color: Colors.black,
+          fontWeight: FontWeight.w400,
+          fontSize: 18),
     ),
     // appBarTheme: const AppBarTheme(
     //   centerTitle: true,
@@ -30,6 +46,7 @@ final mainTheme = ThemeData(
       selectedItemColor: Color.fromARGB(100, 50, 50, 50),
       unselectedItemColor: Color.fromARGB(100, 50, 50, 50),
     ));
+
 
 const appBarColor = Color.fromARGB(255, 250, 255, 250);
 const mainCard = Color.fromARGB(255, 237, 255, 237);

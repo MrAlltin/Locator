@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:locator/features/location_list/widgets/locations_list/cupertino_super.dart';
 
-import '../../widgets/widgets.dart';
-import 'package:locator/repositories/locations.dart';
 import 'package:locator/themes/main_theme/export.dart';
 
 class CupertinoLocationList extends StatefulWidget {
@@ -15,11 +13,7 @@ class CupertinoLocationList extends StatefulWidget {
 
 class _CupertinoLocationListState extends State<CupertinoLocationList> {
   int _currentIndex = 0;
-  final List<Widget> _tabs = [
-    Tab1(),
-    Tab2(),
-    Tab3(),
-  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -40,22 +34,23 @@ class _CupertinoLocationListState extends State<CupertinoLocationList> {
                 debugPrint('Нажат Tab #$index');
               });
             },
-            items: [
+            items: const [
               BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.home),
                 label: 'Главная',
               ),
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.search),
-                label: 'Tab 2',
+                icon: Icon(CupertinoIcons.heart),
+                label: 'Избранное',
               ),
               BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.person),
-                label: 'Tab 3',
+                label: 'Профиль',
               ),
             ],
           ),
-          tabBuilder: (context, index) => CupertinoPageOne(),
+          tabBuilder: (context, index) => SafeArea(child: SuperScaffoldApp(name: widget.name, currentIndex: _currentIndex,)
+    ),
         ),
 /// The line `      ),` is closing the `SafeArea` widget in the `build` method of the
 /// `_CupertinoLocationListState` class. It is closing the parentheses for the `SafeArea` widget and the
@@ -63,52 +58,11 @@ class _CupertinoLocationListState extends State<CupertinoLocationList> {
       // ),
     );
   }
-
-  SafeArea CupertinoPageOne() {
-    return SafeArea(child:
-    CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        brightness: Brightness.light,
-        middle: Text(widget.name),
-      ),
-      child: Scaffold(
-        body: _tabs[_currentIndex],
-      ),
-    ));
-  }
 }
 
-class Tab1 extends StatelessWidget {
-  final List locations = GetLocations().get_locations();
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-        itemBuilder: (context, index) => LocationCard(location: locations[index]),
-        itemCount: locations.length,
-        separatorBuilder: (context, index) => const SizedBox(
-              width: 1,
-            ));
-  }
-}
 
-class Tab2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Tab 2 Content'),
-    );
-  }
-}
 
-class Tab3 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Tab 3 Content'),
-    );
-  }
-}
       // bottomNavigationBar: BottomNavigationBar(
       //   currentIndex: 0,
       //   showSelectedLabels: false,
