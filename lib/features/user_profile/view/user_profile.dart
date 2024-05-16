@@ -13,7 +13,7 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return CupertinoTabView(builder: (context) {
-      return Container(color: appBarColor, child:Container(margin: EdgeInsets.only(top: 12), child: CupertinoPageScaffold(
+      return Container(color: appBarColor, child:Container(margin: const EdgeInsets.only(top: 12), child: CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           border: null,
           // padding: EdgeInsetsDirectional.only(top: 30),
