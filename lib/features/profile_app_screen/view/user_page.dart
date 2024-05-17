@@ -20,9 +20,9 @@ class _UserPageState extends State<UserPage> {
     return SuperScaffold(
         appBar: SuperAppBar(
             largeTitle: SuperLargeTitle(enabled: false),
-            title: const Text('Профиль'),
+            title: const Text('Настройки'),
             searchBar: SuperSearchBar(enabled: false)),
-        body: UserPageBody());
+        body: const UserPageBody());
   }
 }
     // return Center(

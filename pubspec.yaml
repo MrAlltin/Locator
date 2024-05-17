@@ -38,6 +38,7 @@ dependencies:
   super_cupertino_navigation_bar: ^2.1.2
   firebase_core: ^2.31.0
   firebase_auth: ^4.19.5
+  firebase_database: ^10.5.5
   firebase_core_platform_interface: ^5.0.0
   auto_route: ^8.1.3
 

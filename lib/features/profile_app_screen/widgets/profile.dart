@@ -12,8 +12,8 @@ class ProfileUpdateNotifier {
 
   Stream get profileUpdateStream => _profileUpdateController.stream;
 
-  void notifyProfileUpdate() {
-    _profileUpdateController.add(true);
+  void notifyProfileUpdate(bool _isAuthenticated) {
+    _profileUpdateController.add(_isAuthenticated);
   }
 
   void dispose() {
@@ -39,7 +39,6 @@ class _AuthPageState extends State<AuthPage> {
   bool _isRegistering = false;
 
   Future<void> _resetPass () async {
-    print('ITS EMAIL ${_emailController.text}');
     if (_emailController.text.isEmpty){
       return ErrorDialog('Не указана электронная почта');
     }
@@ -47,7 +46,7 @@ class _AuthPageState extends State<AuthPage> {
       await _auth.sendPasswordResetEmail(email: _emailController.text);
       SuccessDialog('Ссылка для востановления пароля отправлена на электронную почту');
     } catch (e) {
-      print('ITS e == $e');
+      debugPrint(e.toString());
     }
   }
 
@@ -56,14 +55,14 @@ class _AuthPageState extends State<AuthPage> {
         'Произошла непредвиденая ошибка. \nСвяжитесь с администратором.';
     if (_isRegistering) {
       if (_passwordController.text != _confirmPasswordController.text) {
-        // Обработка ошибки неправильного подтверждения пароля
+        ErrorDialog('Пароли должны совпадать');
       }
       try {
         await _auth.createUserWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
-        profileUpdateNotifier.notifyProfileUpdate();
+        profileUpdateNotifier.notifyProfileUpdate(true);
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case 'email-already-in-use':
@@ -86,7 +85,7 @@ class _AuthPageState extends State<AuthPage> {
           email: _emailController.text,
           password: _passwordController.text,
         );
-        profileUpdateNotifier.notifyProfileUpdate();
+        profileUpdateNotifier.notifyProfileUpdate(true);
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case 'invalid-email':

@@ -35,6 +35,11 @@ final mainTheme = ThemeData(
           color: Colors.black,
           fontWeight: FontWeight.w400,
           fontSize: 18),
+      labelSmall: TextStyle(
+          fontFamily: 'San Francisco',
+          color: Colors.black,
+          fontWeight: FontWeight.w400,
+          fontSize: 14),
     ),
     // appBarTheme: const AppBarTheme(
     //   centerTitle: true,

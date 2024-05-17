@@ -22,9 +22,9 @@ class _ProfilePageState extends State<ProfilePage> {
       _isAuthenticated = true;
     }
     super.initState();
-    profileUpdateNotifier.profileUpdateStream.listen((_) {
+    profileUpdateNotifier.profileUpdateStream.listen((isAuth) {
       setState(() {
-        _isAuthenticated ? _isAuthenticated = false : _isAuthenticated = true;
+        _isAuthenticated = isAuth;
       });
     });
   }

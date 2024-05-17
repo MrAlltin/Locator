@@ -12,9 +12,9 @@ class CupertinoLocationApp extends StatelessWidget {
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(appBarColor); // Установите желаемый 
     return  CupertinoApp(
-      title: 'Flutter Demo',
+      title: 'Компас Петербурга',
       routes: {
-        '/': (context) => CupertinoLocationList(name: 'Куда, Питер?'),
+        '/': (context) => CupertinoLocationList(name: 'Компас Петербурга'),
         '/user-profile': (context) => UserProfile(),
       },
       theme: cupertinoTheme,

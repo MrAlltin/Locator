@@ -2,11 +2,8 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:locator/features/profile_app_screen/view/user_page.dart';
 import 'package:locator/features/profile_app_screen/widgets/widgets.dart';
 import 'package:locator/themes/main_theme/export.dart';
-
-import '../../user_profile/view/view.dart';
 
 class UserPageBody extends StatefulWidget {
   const UserPageBody({super.key});
@@ -24,11 +21,26 @@ class _UserPageBodyState extends State<UserPageBody> {
   @override
   Widget build(BuildContext context) {
     Icon chevron = const Icon(CupertinoIcons.chevron_forward);
+    const Divider divider = Divider(
+      indent: 65,
+    );
+    String helloText = (_auth.currentUser!.displayName != null)
+        ? '${_auth.currentUser!.displayName.toString()}, для вас:'
+        : _auth.currentUser!.email.toString();
+    String avatarLetter = helloText.substring(0, 1).toUpperCase();
+
     return SafeArea(
         child: Column(children: [
-      (_auth.currentUser!.displayName != null)
-          ? Text(_auth.currentUser!.displayName.toString())
-          : Text(_auth.currentUser!.email.toString()),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 15,
+          ),
+          Text(helloText),
+        ],
+      ),
+
       Card(
         color: mainCard,
         margin: const EdgeInsets.all(15),
@@ -38,20 +50,36 @@ class _UserPageBodyState extends State<UserPageBody> {
               height: 5,
             ),
             CupertinoListTile(
-              leading: const Icon(
-                CupertinoIcons.person_alt_circle,
-                size: 30,
+              leading: CircleAvatar(
+                backgroundColor:
+                    cupertinoTheme.primaryColor, // Цвет фона круглого элемента
+                radius: 30, // Радиус круглого элемента
+                child: Text(
+                  avatarLetter, // Буква или текст, который вы хотите отобразить
+                  style: const TextStyle(
+                    color: Colors.white, // Цвет текста
+                    fontSize: 20, // Размер текста
+                  ),
+                ),
               ),
               title: const Text('Мой профиль'),
               trailing: chevron,
               onTap: () {
                 Navigator.pushNamed(context, '/user-profile');
-                // Navigator.of(context, rootNavigator: true).push(
-                //   CupertinoPageRoute(builder: (context) => UserProfile()),
-                // );
               },
             ),
-            const Divider(),
+            // CupertinoListTile(
+            //   leading: const Icon(
+            //     CupertinoIcons.person_alt_circle,
+            //     size: 30,
+            //   ),
+            //   title: const Text('Мой профиль'),
+            //   trailing: chevron,
+            //   onTap: () {
+            //     Navigator.pushNamed(context, '/user-profile');
+            //   },
+            // ),
+            divider,
             CupertinoListTile(
               leading: const Icon(
                 CupertinoIcons.settings,
@@ -63,7 +91,7 @@ class _UserPageBodyState extends State<UserPageBody> {
                 debugPrint('ListTile нажат!');
               },
             ),
-            const Divider(),
+            divider,
             CupertinoListTile(
               leading: const Icon(
                 CupertinoIcons.info,
@@ -75,7 +103,7 @@ class _UserPageBodyState extends State<UserPageBody> {
                 debugPrint('ListTile нажат!');
               },
             ),
-            const Divider(),
+            divider,
             CupertinoListTile(
               leading: const Icon(
                 CupertinoIcons.bubble_left_bubble_right,
@@ -87,27 +115,23 @@ class _UserPageBodyState extends State<UserPageBody> {
                 debugPrint('ListTile нажат!');
               },
             ),
-            Padding(padding: EdgeInsets.only(bottom: 5)),
+            const Padding(padding: EdgeInsets.only(bottom: 5)),
           ],
         ),
       ),
       // CupertinoButton(
       //   child: const Text('Изменить DisplayName'),
-      //   onPressed: () {
-      //     _auth.currentUser!.updateDisplayName('MrAlltin');
-      //   },
+      // onPressed: () {
+      //   _auth.currentUser!.updateDisplayName('MrAlltin');
+      // },
       // ),
       CupertinoButton(
         child: const Text('Выйти'),
         onPressed: () {
           signOut();
-          profileUpdateNotifier.notifyProfileUpdate();
+          profileUpdateNotifier.notifyProfileUpdate(false);
         },
       )
     ]));
-  }
-
-  FutureOr<void> newMethod() {
-    debugPrint('ListTile нажат!');
   }
 }

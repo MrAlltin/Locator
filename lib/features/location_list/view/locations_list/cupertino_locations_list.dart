@@ -43,9 +43,9 @@ class _CupertinoLocationListState extends State<CupertinoLocationList> {
                 icon: Icon(CupertinoIcons.heart),
                 label: 'Избранное',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.person),
-                label: 'Профиль',
+              BottomNavigationBarItem(  
+                icon: Icon(CupertinoIcons.settings),
+                label: 'Настройки',
               ),
             ],
           ),
