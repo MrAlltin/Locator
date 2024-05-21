@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:locator/features/location_list/widgets/locations_list/cupertino_super.dart';
+import 'package:locator/models/firebase.dart';
+import 'package:locator/repositories/firebase.dart';
 
 import 'package:locator/themes/main_theme/export.dart';
 
@@ -13,7 +15,6 @@ class CupertinoLocationList extends StatefulWidget {
 
 class _CupertinoLocationListState extends State<CupertinoLocationList> {
   int _currentIndex = 0;
-
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,6 @@ class _CupertinoLocationListState extends State<CupertinoLocationList> {
             onTap: (index) {
               setState(() {
                 _currentIndex = index;
-                debugPrint('Нажат Tab #$index');
               });
             },
             items: const [

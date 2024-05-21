@@ -1,0 +1,6 @@
+{
+  "rules": {
+    ".read": true,  // 2024-6-14
+    ".write": "root.child('users').child(auth.uid).child('roles/admin').val() == true",  // 2024-6-14
+  }
+}

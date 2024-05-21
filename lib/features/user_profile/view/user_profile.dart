@@ -203,7 +203,7 @@ class _UserProfileState extends State<UserProfile> {
                             alignment: Alignment.center,
                             child: CupertinoButton.filled(
                               onPressed: () {
-                                downloadInfo();
+                                downloadInfo(0,10);
                               },
                               child: const Text('Cчитать данные'),
                             ),

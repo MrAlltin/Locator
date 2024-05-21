@@ -1,49 +1,73 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'package:locator/models/firebase.dart';
 import 'package:locator/models/models.dart';
 import 'package:locator/repositories/yandex_maps.dart';
-
-import 'package:flutter/material.dart';
 import 'package:locator/themes/main_theme/export.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LocationCard extends StatefulWidget {
-  const LocationCard({super.key, required this.location});
-  final Map<String, dynamic> location;
+  const LocationCard({
+    Key? key,
+    required this.location,
+  }) : super(key: key);
+  final CustomData location;
 
   @override
   State<LocationCard> createState() => _LocationCardState();
 }
 
 class _LocationCardState extends State<LocationCard> {
+  final Reference storageRef = FirebaseStorage.instance.ref();
+  String? _url;
+  Uint8List? _image;
   bool isFavorite = false;
   List<FavoriteItem>? favorites;
   final String key = 'favorites';
-  
 
   @override
   void initState() {
     super.initState();
-    loadFavoritesStatus();
+    _downloadImage(widget.location.image);
   }
 
-  void loadFavoritesStatus() async {
-    // favorites = await loadFavorites(key);
-    debugPrint(favorites.toString());
-    favorites?.forEach((element) {
-      if (element.title == widget.location['name']) {
-        setState(() {
-          isFavorite = true;
-        });
-      }
+  void _downloadImage(String imageName) async {
+    final imagesRef = storageRef.child(imageName);
+    imagesRef.getData().then((value){
+      setState(() {
+        _image = value;
+      });
     });
   }
 
+  // void _downloadImageFiles(String imageName) async {
+  //   final imagesRef = storageRef.child(imageName);
+  //   imagesRef.getDownloadURL().then((value) {
+  //     setState(() {
+  //       _url = value;
+  //     });
+  //   });
+  // }
+
+  // void loadFavoritesStatus() async {
+  //   // favorites = await loadFavorites(key);
+  //   debugPrint(favorites.toString());
+  //   favorites?.forEach((element) {
+  //     if (element.title == widget.location.name) {
+  //       setState(() {
+  //         isFavorite = true;
+  //       });
+  //     }
+  //   });
+  // }
+
   Icon favoriteIcon = const Icon(Icons.favorite_border);
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +78,8 @@ class _LocationCardState extends State<LocationCard> {
         ListTile(
           // leading: const Icon(Icons.forest),
           leading: const Icon(Icons.forest),
-          title: Text(widget.location['name']),
-          subtitle: Text(widget.location['coordinates']),
+          title: Text(widget.location.name),
+          subtitle: Text(widget.location.coordinates),
           trailing: IconButton(
             icon: isFavorite
                 ? Icon(Icons.favorite, color: cupertinoTheme.primaryColor)
@@ -74,14 +98,17 @@ class _LocationCardState extends State<LocationCard> {
           ),
           contentPadding: const EdgeInsets.only(left: 15, right: 0),
         ),
-        Image.asset(
-          widget.location['image'],
-          fit: BoxFit.fill,
-          // height: 210,
+        
+        _image == null? CircularProgressIndicator(color: cupertinoTheme.primaryColor) :
+        Image.memory(
+          key: widget.key,
+          _image!,
+        //   // fit: BoxFit.fill,
+        //   // height: 210,
         ),
         Padding(
           padding: const EdgeInsets.all(10),
-          child: Text(widget.location['desc'],
+          child: Text(widget.location.desc,
               // style: mainTheme.textTheme.bodySmall,
               textAlign: TextAlign.justify),
         ),
@@ -101,7 +128,7 @@ class _LocationCardState extends State<LocationCard> {
               OutlinedButton.icon(
                 onPressed: () async {
                   List splitted =
-                      widget.location['coordinates'].toString().split(', ');
+                      widget.location.coordinates.toString().split(', ');
                   Uri uri = Uri.parse(
                       'yandexmaps://maps.yandex.ru/?rtext=~${splitted[0]},${splitted[1]}');
                   try {
