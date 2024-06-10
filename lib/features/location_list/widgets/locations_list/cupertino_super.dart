@@ -7,6 +7,7 @@ import 'package:locator/features/location_list/widgets/location_card/location_ca
 import 'package:locator/models/firebase.dart';
 import 'package:locator/repositories/firebase.dart';
 import 'package:locator/repositories/locations.dart';
+import 'package:firebase_pagination/firebase_pagination.dart';
 import 'package:super_cupertino_navigation_bar/super_cupertino_navigation_bar.dart';
 import 'package:locator/features/location_list/view/view.dart';
 
@@ -58,18 +59,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    getData();
+    // getData();
     if (!isFetched) {
       // fetchData();
       isFetched = true;
     }
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        // fetchData();
-        getData();
-      }
-    });
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.pixels ==
+    //       _scrollController.position.maxScrollExtent) {
+    //     // fetchData();
+    //     getData();
+    //   }
+    // });
     debugPrint('_downloadImage');
     _downloadImage();
     super.initState();
@@ -77,10 +78,7 @@ class _HomePageState extends State<HomePage> {
 
   void _downloadImage() async {
     List<Uint8List> _imageList = [];
-    debugPrint('hello _downloadImage');
-    debugPrint('locations = ' + locations.toString());
     for (var i in locations) {
-      debugPrint('i = $i');
       final imagesRef = storageRef.child(i.image);
       imagesRef.getData().then((value) {
         _imageList.add(value!);
@@ -91,14 +89,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> getData() async {
-    List<CustomData> data = [];
-    getDataRepository().then((value) {
-      setState(() {
-        locations.addAll(value);
-      });
-    });
-  }
+  // Future<void> getData() async {
+  //   debugPrint(locations.length.toString());
+  //   getDataRepository().then((value) {
+  //     setState(() {
+  //       locations.addAll(value);
+  //     });
+  //   });
+  // }
 
   Future<void> fetchData() async {
     List<CustomData> data = await downloadInfo(_perPage, _currentPage);
@@ -114,34 +112,46 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return SuperScaffold(
-      appBar: SuperAppBar(
-          largeTitle: SuperLargeTitle(
-            enabled: false,
-          ),
-          // brightness: Brightness.light,
-          title: Text(widget.name),
-          searchBar: SuperSearchBar(placeholderText: 'Поиск')),
-      body: ListView.separated(
-          addAutomaticKeepAlives: true,
-          // itemBuilder: (context, index) => isFetched
-          //     ? LocationCard(location: locations[index])
-          //     : const CircularProgressIndicator(),
-          itemBuilder: (context, index) {
-            if (index == locations.length) {
-              getData();
-              return CircularProgressIndicator();
-            } else {
-              return LocationCard(
-                key: ValueKey(index),
-                location: locations[index],
-                // image: _images[index],
-              );
-            }
+        appBar: SuperAppBar(
+            largeTitle: SuperLargeTitle(
+              enabled: false,
+            ),
+            // brightness: Brightness.light,
+            title: Text(widget.name),
+            searchBar: SuperSearchBar(placeholderText: 'Поиск')),
+        body: FirestorePagination(
+          limit: 10,
+          query: FirebaseFirestore.instance.collection('Objects'),
+          itemBuilder: (context, documentSnapshot, index) {
+            final data = CustomData.fromMap(
+                documentSnapshot.data() as Map<String, dynamic>);
+            return LocationCard(key: ValueKey(index),
+              location: data);
           },
-          itemCount: locations.length + 1,
-          separatorBuilder: (context, index) => const SizedBox(
-                width: 1,
-              )),
-    );
+        )
+        // body: ListView.separated(
+        //     addAutomaticKeepAlives: true,
+        //     // itemBuilder: (context, index) => isFetched
+        //     //     ? LocationCard(location: locations[index])
+        //     //     : const CircularProgressIndicator(),
+        //     itemBuilder: (context, index) {
+        //       if (locations == []){
+        //         return Text('Вы посмотрели все!');
+        //       }
+        //       else if (index == locations.length) {
+        //         getData();
+        //       } else {
+        //         return LocationCard(
+        //           key: ValueKey(index),
+        //           location: locations[index],
+        //           // image: _images[index],
+        //         );
+        //       }
+        //     },
+        //     itemCount: locations.length + 1,
+        //     separatorBuilder: (context, index) => const SizedBox(
+        //           width: 1,
+        //         )),
+        );
   }
 }

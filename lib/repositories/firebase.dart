@@ -1,6 +1,8 @@
 import 'dart:collection';
+import 'dart:html';
 import 'dart:typed_data';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -88,16 +90,46 @@ Future<Uint8List?> downloadImage() async {
 //     print('Error reading data: $error');
 //   });
 // }
-
-Future<List<CustomData>> getDataRepository() async {
+var _lastDocument;
+Future<QuerySnapshot<Map<String, dynamic>>> getDataRepository() async {
   FirebaseFirestore instance = FirebaseFirestore.instance;
   var collection = instance.collection('Objects');
   var query = collection.limit(2);
-  var queryGet = await query.get();
-  List<CustomData> listCustomData = [];
-  for (var doc in queryGet.docs){
-    CustomData customData = CustomData.fromMap(doc.data());
-    listCustomData.add(customData);
+  if (_lastDocument != null) {
+    query = query.startAfterDocument(_lastDocument);
   }
-  return listCustomData;
+  var queryGet = await query.get();
+  if (queryGet.size != 0) {
+    _lastDocument = queryGet.docs[queryGet.size - 1];
+  }
+  return await query.get();
+}
+
+Future<List<dynamic>> getUserFavorite(User _currentUser, FirebaseFirestore instance) async {
+  var collection = instance.collection('Users');
+  debugPrint(_currentUser.uid);
+  var query = collection.doc(_currentUser.uid);
+  List<dynamic> list = await query.get().then((value) {
+    final data = value.data();
+    return data!['favorites'];
+  });
+  return list;
+}
+
+void addToFavorite(User _currentUser, int id) async{
+  FirebaseFirestore instance = FirebaseFirestore.instance;
+  List<dynamic> favorites = await getUserFavorite(_currentUser, instance);
+  debugPrint('Its addToFavorite $favorites');
+  if (!favorites.contains(id)){
+      favorites.add(id);
+      await instance.collection('Users').doc(_currentUser.uid).set({'favorites': favorites});
+  }  
+}
+void removeFromFavorite(User _currentUser, int id) async{
+  FirebaseFirestore instance = FirebaseFirestore.instance;
+  List<dynamic> favorites = await getUserFavorite(_currentUser, instance);
+  if (favorites.contains(id)){
+    favorites.remove(id);
+    await instance.collection('Users').doc(_currentUser.uid).set({'favorites': favorites});
+  }
 }

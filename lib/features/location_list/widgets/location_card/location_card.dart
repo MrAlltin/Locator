@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:locator/repositories/firebase.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:locator/models/firebase.dart';
@@ -20,16 +23,23 @@ class LocationCard extends StatefulWidget {
   final CustomData location;
 
   @override
-  State<LocationCard> createState() => _LocationCardState();
+  State<LocationCard> createState() {
+    return new _LocationCardState();
+  }
 }
 
-class _LocationCardState extends State<LocationCard> {
+class _LocationCardState extends State<LocationCard>
+    with AutomaticKeepAliveClientMixin {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final Reference storageRef = FirebaseStorage.instance.ref();
   String? _url;
   Uint8List? _image;
   bool isFavorite = false;
-  List<FavoriteItem>? favorites;
+  List<dynamic> favorites = [];
   final String key = 'favorites';
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -39,7 +49,7 @@ class _LocationCardState extends State<LocationCard> {
 
   void _downloadImage(String imageName) async {
     final imagesRef = storageRef.child(imageName);
-    imagesRef.getData().then((value){
+    imagesRef.getData().then((value) {
       setState(() {
         _image = value;
       });
@@ -55,22 +65,20 @@ class _LocationCardState extends State<LocationCard> {
   //   });
   // }
 
-  // void loadFavoritesStatus() async {
-  //   // favorites = await loadFavorites(key);
-  //   debugPrint(favorites.toString());
-  //   favorites?.forEach((element) {
-  //     if (element.title == widget.location.name) {
-  //       setState(() {
-  //         isFavorite = true;
-  //       });
-  //     }
-  //   });
-  // }
+  void loadFavoritesStatus() async {
+    FirebaseFirestore instance = FirebaseFirestore.instance;
+    favorites = await getUserFavorite(_auth.currentUser!, instance);
+  }
+
+
 
   Icon favoriteIcon = const Icon(Icons.favorite_border);
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    loadFavoritesStatus();
+    isFavorite = favorites.contains(widget.location.id);
     return Card(
       margin: const EdgeInsets.only(bottom: 15, left: 15, right: 15),
       color: mainCard,
@@ -84,28 +92,34 @@ class _LocationCardState extends State<LocationCard> {
             icon: isFavorite
                 ? Icon(Icons.favorite, color: cupertinoTheme.primaryColor)
                 : const Icon(Icons.favorite_border),
-            onPressed: () {
+            onPressed: () async {
+              debugPrint(widget.location.id.toString());
+              if (_auth.currentUser == null) {
+                ErrorDialog(
+                    'Для использования списка избранных локаций необходима авторизация.');
+              }
               if (isFavorite) {
-                // removeFromFavorites(widget.location['name']);
+                removeFromFavorite(_auth.currentUser!, widget.location.id);
                 isFavorite = false;
               } else {
-                setState(() {
-                  // addToFavorites(widget.location['name']);
-                  isFavorite = true;
-                });
+                addToFavorite(_auth.currentUser!, widget.location.id);
+                // var list = await getUserFavorite(_auth.currentUser!);
+                // debugPrint('ITS LIST $list');
+                isFavorite = true;
               }
+              setState(() {});
             },
           ),
           contentPadding: const EdgeInsets.only(left: 15, right: 0),
         ),
-        
-        _image == null? CircularProgressIndicator(color: cupertinoTheme.primaryColor) :
-        Image.memory(
-          key: widget.key,
-          _image!,
-        //   // fit: BoxFit.fill,
-        //   // height: 210,
-        ),
+        _image == null
+            ? CircularProgressIndicator(color: cupertinoTheme.primaryColor)
+            : Image.memory(
+                key: widget.key,
+                _image!,
+                //   // fit: BoxFit.fill,
+                //   // height: 210,
+              ),
         Padding(
           padding: const EdgeInsets.all(10),
           child: Text(widget.location.desc,
@@ -160,5 +174,23 @@ class _LocationCardState extends State<LocationCard> {
         ),
       ]),
     );
+  }
+
+  ErrorDialog(String error) {
+    return showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: const Text('Ошибка'),
+            content: Text(error),
+            actions: [
+              CupertinoDialogAction(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  })
+            ],
+          );
+        });
   }
 }

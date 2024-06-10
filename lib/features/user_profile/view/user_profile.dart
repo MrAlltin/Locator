@@ -199,15 +199,15 @@ class _UserProfileState extends State<UserProfile> {
                                   ],
                                 ),
                               )),
-                          Align(
-                            alignment: Alignment.center,
-                            child: CupertinoButton.filled(
-                              onPressed: () {
-                                downloadInfo(0,10);
-                              },
-                              child: const Text('Cчитать данные'),
-                            ),
-                          ),
+                          // Align(
+                          //   alignment: Alignment.center,
+                          //   child: CupertinoButton.filled(
+                          //     onPressed: () {
+                          //       downloadInfo(0,10);
+                          //     },
+                          //     child: const Text('Cчитать данные'),
+                          //   ),
+                          // ),
                         ],
                       )),
                 )));
